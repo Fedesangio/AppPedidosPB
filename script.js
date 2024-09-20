@@ -41,6 +41,8 @@ function generarTarjetas() {
   });
 }
 
+generarTarjetas ()
+
 // Función para mostrar el carrito de compras
 function mostrarCarrito() {
   const cartContainer = document.getElementById('cart-items');
@@ -62,6 +64,8 @@ function mostrarCarrito() {
 // Función para finalizar el pedido y guardar los datos necesarios
 document.getElementById('finalize-order').addEventListener('click', () => {
   const nombreCliente = document.getElementById('customer-name').value;
+  const fechaEntrega = document.getElementById('delivery-date').value;
+  
   if (nombreCliente === '') {
     alert('Por favor ingresa el nombre del cliente.');
     return;
@@ -70,24 +74,27 @@ document.getElementById('finalize-order').addEventListener('click', () => {
   const nota = document.getElementById('customer-note').value;
   const total = carrito.reduce((acc, prod) => acc + (prod.precio * prod.cantidad), 0);
   
+  if (total === 0) {
+    alert('El carrito está vacío.');
+    return;
+  }
+
   const pedido = {
     cliente: nombreCliente,
     productos: carrito.map(({ nombre, cantidad }) => ({ nombre, cantidad })),
     total: total,
-    nota: nota
+    nota: nota,
+    fechaEntrega: fechaEntrega
   };
   
+  // Guardar en localStorage
   localStorage.setItem('pedido', JSON.stringify(pedido));
   alert('Pedido guardado con éxito para ' + nombreCliente);
 
-  // Limpiar el formulario
+  // Limpiar el formulario y el carrito
   carrito = [];
   document.getElementById('customer-name').value = '';
   document.getElementById('customer-note').value = '';
+  document.getElementById('delivery-date').value = '';
   mostrarCarrito();
 });
-
-// Asegúrate de que el DOM esté cargado antes de ejecutar la función
-window.onload = function() {
-  generarTarjetas(); // Genera las tarjetas cuando la página haya cargado
-};
